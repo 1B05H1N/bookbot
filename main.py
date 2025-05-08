@@ -2,9 +2,9 @@ import os
 from collections import Counter
 
 def list_books(directory):
-    # List all files in the given directory
+    # List all .txt files in the given directory
     try:
-        books = os.listdir(directory)
+        books = [f for f in os.listdir(directory) if f.endswith('.txt')]
         if not books:
             print("No books found in the directory.")
             return []
@@ -31,10 +31,10 @@ def choose_book(books):
 def read_book(file_path):
     # Read and return the content of the chosen book
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             content = file.read()
             print("\n--- Book Content Preview ---\n")
-            print(content[:500] + "\n...")  # Print first 500 characters for preview
+            print(content[:500] + ("\n..." if len(content) > 500 else ""))
             print("\n--- End of Preview ---")
             return content
     except FileNotFoundError:
@@ -50,7 +50,7 @@ def count_words(text):
 
 def count_characters(text):
     # Count occurrences of each character, ignoring case
-    text = text.lower()  # Convert to lowercase to avoid duplicates
+    text = text.lower()
     char_counts = Counter(text)
     return char_counts
 
@@ -67,7 +67,15 @@ def main():
             char_counts = count_characters(content)
             print("\nCharacter frequency count (ignoring case):")
             for char, count in char_counts.items():
-                print(f"'{char}': {count}")
+                if char == '\n':
+                    display_char = '\\n'
+                elif char == '\t':
+                    display_char = '\\t'
+                elif char == ' ':
+                    display_char = "' '"
+                else:
+                    display_char = char
+                print(f"'{display_char}': {count}")
 
 if __name__ == "__main__":
     main()
